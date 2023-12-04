@@ -8,9 +8,7 @@
   <body>
     <h1>Hello World</h1>
     <ul>
-      {% for order in query_set %}
-      <li>{{ order.id }} - {{ order.customer.first_name }}</li>
-      {% endfor %}
+      {{ result }}
     </ul>
   </body>
 </html>

@@ -1,7 +1,9 @@
 from django.shortcuts import render
-from django.db.models import Q, F
+from django.db.models import Q, F, Value, Func, ExpressionWrapper, DecimalField
+from django.db.models.functions import Concat
+from django.db.models.aggregates import Count, Max, Min, Avg
 from django.core.exceptions import ObjectDoesNotExist
-from store.models import Product, OrderItem, Order
+from store.models import Product, OrderItem, Order, Customer
 from ninja import NinjaAPI
 
 app = NinjaAPI()
@@ -10,12 +12,9 @@ app = NinjaAPI()
 
 
 def say_hello(request):
-    query_set = (
-        Order.objects.select_related("customer")
-        .prefetch_related("orderitem_set__product")
-        .order_by(
-            "-placed_at",
-        )[:5]
+    discounted_price = ExpressionWrapper(
+        F("unit_price") * 0.8, output_field=DecimalField()
     )
+    result = Product.objects.annotate(dicounted_price=discounted_price)
 
-    return render(request, "hello.html", {"query_set": list(query_set)})
+    return render(request, "hello.html", {"result": list(result)})
