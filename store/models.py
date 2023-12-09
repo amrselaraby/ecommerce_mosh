@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 
 
@@ -12,16 +13,32 @@ class Collection(models.Model):
         "Product", on_delete=models.SET_NULL, null=True, related_name="collections"
     )
 
+    def __str__(self) -> str:
+        return self.title
+
+    class Meta:
+        ordering = ["title"]
+
 
 class Product(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField()
-    description = models.TextField()
-    unit_price = models.DecimalField(max_digits=6, decimal_places=2)
+    description = models.TextField(null=True, blank=True)
+    unit_price = models.DecimalField(
+        validators=[MinValueValidator(1)],
+        max_digits=6,
+        decimal_places=2,
+    )
     inventory = models.IntegerField()
     last_update = models.DateTimeField(auto_now=True)
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
-    promotions = models.ManyToManyField(Promotion, related_name="products")
+    promotions = models.ManyToManyField(Promotion, related_name="products", blank=True)
+
+    def __str__(self) -> str:
+        return self.title
+
+    class Meta:
+        ordering = ["title"]
 
 
 class Customer(models.Model):
@@ -44,6 +61,12 @@ class Customer(models.Model):
         max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE
     )
 
+    def __str__(self) -> str:
+        return f"{self.first_name} {self.last_name}"
+
+    class Meta:
+        ordering = ["first_name", "last_name"]
+
 
 class Order(models.Model):
     PAYMENT_STATUS_PENDING = "P"
@@ -61,6 +84,9 @@ class Order(models.Model):
         max_length=1, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING
     )
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
+
+    def __str__(self) -> str:
+        return self.payment_status
 
 
 class OrderItem(models.Model):

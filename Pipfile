@@ -7,8 +7,10 @@ name = "pypi"
 django = "*"
 django-ninja = "*"
 django-debug-toolbar = "*"
+black = "*"
 
 [dev-packages]
+black = "*"
 
 [requires]
 python_version = "3.11"
