@@ -1,7 +1,7 @@
 from ninja import Router
 from django.shortcuts import get_object_or_404
 from .models import Product
-from .schema import ProductBase
+from .schemas import ProductBase
 from typing import List
 
 router = Router()
@@ -9,7 +9,7 @@ router = Router()
 
 @router.get("/products/", response=List[ProductBase])
 def product_list(request):
-    products = Product.objects.all()
+    products = Product.objects.select_related("collection").all()
     return products
 
 
