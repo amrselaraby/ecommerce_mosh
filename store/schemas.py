@@ -1,7 +1,7 @@
 from ninja import Schema, ModelSchema
 from decimal import Decimal
 from typing import List
-from .models import Collection, Product
+from .models import Collection, Product, Review
 
 
 class CollectionBase(ModelSchema):
@@ -45,3 +45,14 @@ class ProductIn(Schema):
     collection_id: int
     inventory: int
     unit_price: Decimal
+
+
+class ReviewBase(ModelSchema):
+    class Meta:
+        model = Review
+        fields = ["id", "name", "date", "description", "product"]
+
+
+class ReviewIn(Schema):
+    name: str
+    description: str
