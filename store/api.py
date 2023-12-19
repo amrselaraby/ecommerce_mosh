@@ -1,4 +1,4 @@
-from ninja import Path, Router
+from ninja import Path, Query, Router
 from django.shortcuts import get_object_or_404
 from django.db.models.aggregates import Count
 from .models import Product, Collection, Review
@@ -7,6 +7,7 @@ from .schemas import (
     CollectionIn,
     CollectionOut,
     ProductBase,
+    ProductFilterSchema,
     ProductIn,
     ReviewBase,
     ReviewIn,
@@ -19,8 +20,13 @@ product_router = Router(tags=["products"])
 
 
 @product_router.get("/", response=List[ProductBase])
-def product_list(request):
+def product_list(
+    request, collection_id: int = None, filters: ProductFilterSchema = Query(...)
+):
     products = Product.objects.select_related("collection").all()
+    if collection_id:
+        products = products.filter(collection_id=collection_id)
+    products = filters.filter(products)
     return products
 
 

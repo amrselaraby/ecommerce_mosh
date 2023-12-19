@@ -1,7 +1,13 @@
-from ninja import Schema, ModelSchema
+from ninja import Field, Schema, ModelSchema, FilterSchema
 from decimal import Decimal
-from typing import List
+from typing import List, Optional
 from .models import Collection, Product, Review
+
+
+class ProductFilterSchema(FilterSchema):
+    search: Optional[str] = Field(
+        None, q=["title__icontains", "description__icontains"]
+    )
 
 
 class CollectionBase(ModelSchema):
