@@ -8,6 +8,7 @@ django = "*"
 django-ninja = "*"
 django-debug-toolbar = "*"
 black = "*"
+ruff = "*"
 
 [dev-packages]
 black = "*"
